@@ -3,13 +3,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils";
-import { MessageCircle, X } from "lucide-react";
+import { MessageCircle, X, Instagram } from "lucide-react";
 
 interface PaintingModalProps {
   painting: Painting | null;
   isOpen: boolean;
   onClose: () => void;
   whatsappNumber?: string;
+  instagramUrl?: string;
 }
 
 const PaintingModal = ({
@@ -17,6 +18,7 @@ const PaintingModal = ({
   isOpen,
   onClose,
   whatsappNumber = "918272998798",
+  instagramUrl = "https://www.instagram.com/the_rainbow_palatte",
 }: PaintingModalProps) => {
   if (!painting) return null;
 
@@ -24,6 +26,10 @@ const PaintingModal = ({
     const message = `Hello! I'm interested in the painting "${painting.title}" by ${painting.artist} priced at ${formatPrice(painting.price)}. Is it still available?`;
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, "_blank");
+  };
+
+  const handleInstagramInquiry = () => {
+    window.open(instagramUrl, "_blank");
   };
 
   return (
@@ -128,17 +134,27 @@ const PaintingModal = ({
               </div>
             </div>
 
-            {/* CTA Button */}
+            {/* CTA Buttons */}
             {painting.available && (
-              <Button
-                variant="whatsapp"
-                size="lg"
-                className="w-full font-body"
-                onClick={handleWhatsAppInquiry}
-              >
-                <MessageCircle className="h-5 w-5" />
-                Inquire on WhatsApp
-              </Button>
+              <div className="flex flex-col gap-3">
+                <Button
+                  variant="whatsapp"
+                  size="lg"
+                  className="w-full font-body"
+                  onClick={handleWhatsAppInquiry}
+                >
+                  <MessageCircle className="h-5 w-5" />
+                  Inquire on WhatsApp
+                </Button>
+                <Button
+                  size="lg"
+                  className="w-full font-body bg-gradient-to-r from-[#f09433] via-[#e6683c] to-[#dc2743] hover:opacity-90 text-white"
+                  onClick={handleInstagramInquiry}
+                >
+                  <Instagram className="h-5 w-5" />
+                  Inquire on Instagram
+                </Button>
+              </div>
             )}
 
             {!painting.available && (
