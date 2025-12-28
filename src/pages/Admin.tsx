@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useGallery } from "@/context/GalleryContext";
+import { useAuth } from "@/context/AuthContext";
 import { Painting, CATEGORIES } from "@/types/painting";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
@@ -31,8 +33,9 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/utils";
-import { Plus, Pencil, Trash2, Image } from "lucide-react";
+import { Plus, Pencil, Trash2, Image, ShieldAlert, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 const initialFormState = {
   title: "",
@@ -48,12 +51,21 @@ const initialFormState = {
 };
 
 const Admin = () => {
+  const navigate = useNavigate();
+  const { user, isAdmin, loading: authLoading } = useAuth();
   const { paintings, loading, addPainting, updatePainting, deletePainting } = useGallery();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingPainting, setEditingPainting] = useState<Painting | null>(null);
   const [formData, setFormData] = useState(initialFormState);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Redirect if not admin
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate("/auth");
+    }
+  }, [user, authLoading, navigate]);
 
   const resetForm = () => {
     setFormData(initialFormState);
@@ -292,6 +304,52 @@ const Admin = () => {
       </div>
     </form>
   );
+
+  // Show loading state
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="flex items-center justify-center py-32">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
+
+  // Show access denied if not admin
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="container py-16">
+          <div className="max-w-md mx-auto text-center">
+            <div className="flex justify-center mb-6">
+              <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center">
+                <ShieldAlert className="h-8 w-8 text-destructive" />
+              </div>
+            </div>
+            <h1 className="font-display text-2xl font-bold text-foreground mb-2">
+              Access Denied
+            </h1>
+            <p className="font-body text-muted-foreground mb-6">
+              You don't have admin privileges to access this page.
+              {!user && " Please sign in with an admin account."}
+            </p>
+            {!user ? (
+              <Button variant="gallery" asChild>
+                <Link to="/auth">Sign In</Link>
+              </Button>
+            ) : (
+              <Button variant="outline" asChild>
+                <Link to="/">Back to Gallery</Link>
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
