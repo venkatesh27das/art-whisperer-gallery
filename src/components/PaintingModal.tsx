@@ -16,7 +16,7 @@ const PaintingModal = ({
   painting,
   isOpen,
   onClose,
-  whatsappNumber = "1234567890",
+  whatsappNumber = "918272998798",
 }: PaintingModalProps) => {
   if (!painting) return null;
 
