@@ -7,6 +7,7 @@ import PaintingCard from "@/components/PaintingCard";
 import PaintingModal from "@/components/PaintingModal";
 import GalleryFilters from "@/components/GalleryFilters";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import InstagramButton from "@/components/InstagramButton";
 import { Palette } from "lucide-react";
 import heroImage from "@/assets/hero-gallery.jpg";
 
@@ -167,7 +168,8 @@ const Index = () => {
       {/* Footer */}
       <Footer />
 
-      {/* Floating WhatsApp Button */}
+      {/* Floating Social Buttons */}
+      <InstagramButton />
       <WhatsAppButton />
     </div>
   );
