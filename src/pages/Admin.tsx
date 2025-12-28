@@ -48,11 +48,12 @@ const initialFormState = {
 };
 
 const Admin = () => {
-  const { paintings, addPainting, updatePainting, deletePainting } = useGallery();
+  const { paintings, loading, addPainting, updatePainting, deletePainting } = useGallery();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingPainting, setEditingPainting] = useState<Painting | null>(null);
   const [formData, setFormData] = useState(initialFormState);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
     setFormData(initialFormState);
@@ -66,7 +67,7 @@ const Admin = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAddSubmit = (e: React.FormEvent) => {
+  const handleAddSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.title || !formData.artist || !formData.price || !formData.category) {
@@ -74,22 +75,29 @@ const Admin = () => {
       return;
     }
 
-    addPainting({
-      title: formData.title,
-      artist: formData.artist,
-      description: formData.description,
-      price: parseFloat(formData.price),
-      category: formData.category,
-      imageUrl: formData.imageUrl || "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800&h=1000&fit=crop",
-      available: formData.available,
-      dimensions: formData.dimensions,
-      medium: formData.medium,
-      year: parseInt(formData.year),
-    });
+    setIsSubmitting(true);
+    try {
+      await addPainting({
+        title: formData.title,
+        artist: formData.artist,
+        description: formData.description,
+        price: parseFloat(formData.price),
+        category: formData.category,
+        imageUrl: formData.imageUrl || "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800&h=1000&fit=crop",
+        available: formData.available,
+        dimensions: formData.dimensions,
+        medium: formData.medium,
+        year: parseInt(formData.year),
+      });
 
-    toast.success("Painting added successfully!");
-    setIsAddDialogOpen(false);
-    resetForm();
+      toast.success("Painting added successfully!");
+      setIsAddDialogOpen(false);
+      resetForm();
+    } catch (error) {
+      toast.error("Failed to add painting");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleEditClick = (painting: Painting) => {
@@ -109,33 +117,44 @@ const Admin = () => {
     setIsEditDialogOpen(true);
   };
 
-  const handleEditSubmit = (e: React.FormEvent) => {
+  const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!editingPainting) return;
 
-    updatePainting(editingPainting.id, {
-      title: formData.title,
-      artist: formData.artist,
-      description: formData.description,
-      price: parseFloat(formData.price),
-      category: formData.category,
-      imageUrl: formData.imageUrl,
-      available: formData.available,
-      dimensions: formData.dimensions,
-      medium: formData.medium,
-      year: parseInt(formData.year),
-    });
+    setIsSubmitting(true);
+    try {
+      await updatePainting(editingPainting.id, {
+        title: formData.title,
+        artist: formData.artist,
+        description: formData.description,
+        price: parseFloat(formData.price),
+        category: formData.category,
+        imageUrl: formData.imageUrl,
+        available: formData.available,
+        dimensions: formData.dimensions,
+        medium: formData.medium,
+        year: parseInt(formData.year),
+      });
 
-    toast.success("Painting updated successfully!");
-    setIsEditDialogOpen(false);
-    resetForm();
+      toast.success("Painting updated successfully!");
+      setIsEditDialogOpen(false);
+      resetForm();
+    } catch (error) {
+      toast.error("Failed to update painting");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleDelete = (id: string, title: string) => {
+  const handleDelete = async (id: string, title: string) => {
     if (confirm(`Are you sure you want to delete "${title}"?`)) {
-      deletePainting(id);
-      toast.success("Painting deleted successfully!");
+      try {
+        await deletePainting(id);
+        toast.success("Painting deleted successfully!");
+      } catch (error) {
+        toast.error("Failed to delete painting");
+      }
     }
   };
 
@@ -267,8 +286,8 @@ const Admin = () => {
           />
           <Label htmlFor="available" className="font-body">Available for sale</Label>
         </div>
-        <Button type="submit" variant="gallery">
-          {submitLabel}
+        <Button type="submit" variant="gallery" disabled={isSubmitting}>
+          {isSubmitting ? "Saving..." : submitLabel}
         </Button>
       </div>
     </form>

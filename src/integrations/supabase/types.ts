@@ -14,7 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      paintings: {
+        Row: {
+          artist: string
+          available: boolean
+          category: string
+          created_at: string
+          description: string | null
+          dimensions: string | null
+          id: string
+          image_url: string | null
+          medium: string | null
+          price: number
+          title: string
+          updated_at: string
+          year: number | null
+        }
+        Insert: {
+          artist: string
+          available?: boolean
+          category: string
+          created_at?: string
+          description?: string | null
+          dimensions?: string | null
+          id?: string
+          image_url?: string | null
+          medium?: string | null
+          price: number
+          title: string
+          updated_at?: string
+          year?: number | null
+        }
+        Update: {
+          artist?: string
+          available?: boolean
+          category?: string
+          created_at?: string
+          description?: string | null
+          dimensions?: string | null
+          id?: string
+          image_url?: string | null
+          medium?: string | null
+          price?: number
+          title?: string
+          updated_at?: string
+          year?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

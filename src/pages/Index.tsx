@@ -11,7 +11,7 @@ import { Palette } from "lucide-react";
 import heroImage from "@/assets/hero-gallery.jpg";
 
 const Index = () => {
-  const { paintings } = useGallery();
+  const { paintings, loading } = useGallery();
   const [selectedPainting, setSelectedPainting] = useState<Painting | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -114,23 +114,37 @@ const Index = () => {
           />
 
           {/* Paintings Grid */}
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredAndSortedPaintings.map((painting, index) => (
-              <div
-                key={painting.id}
-                className="opacity-0 animate-fade-up"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <PaintingCard
-                  painting={painting}
-                  onClick={() => handlePaintingClick(painting)}
-                />
-              </div>
-            ))}
-          </div>
+          {loading ? (
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="aspect-[4/5] bg-muted rounded-xl" />
+                  <div className="p-4 space-y-3">
+                    <div className="h-5 bg-muted rounded w-3/4" />
+                    <div className="h-4 bg-muted rounded w-1/2" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredAndSortedPaintings.map((painting, index) => (
+                <div
+                  key={painting.id}
+                  className="opacity-0 animate-fade-up"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <PaintingCard
+                    painting={painting}
+                    onClick={() => handlePaintingClick(painting)}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Empty State */}
-          {filteredAndSortedPaintings.length === 0 && (
+          {!loading && filteredAndSortedPaintings.length === 0 && (
             <div className="text-center py-16">
               <p className="font-display text-2xl text-muted-foreground">
                 No paintings found
