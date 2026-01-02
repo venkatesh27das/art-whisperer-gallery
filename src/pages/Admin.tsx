@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGallery } from "@/context/GalleryContext";
 import { useAuth } from "@/context/AuthContext";
@@ -50,6 +50,157 @@ const initialFormState = {
   year: new Date().getFullYear().toString(),
 };
 
+interface PaintingFormProps {
+  formData: typeof initialFormState;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  setFormData: React.Dispatch<React.SetStateAction<typeof initialFormState>>;
+  onSubmit: (e: React.FormEvent) => void;
+  submitLabel: string;
+  isSubmitting: boolean;
+}
+
+const PaintingForm = ({
+  formData,
+  handleInputChange,
+  setFormData,
+  onSubmit,
+  submitLabel,
+  isSubmitting
+}: PaintingFormProps) => (
+  <form onSubmit={onSubmit} className="space-y-4">
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="title" className="font-body">Title *</Label>
+        <Input
+          id="title"
+          name="title"
+          value={formData.title}
+          onChange={handleInputChange}
+          placeholder="Painting title"
+          required
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="artist" className="font-body">Artist *</Label>
+        <Input
+          id="artist"
+          name="artist"
+          value={formData.artist}
+          onChange={handleInputChange}
+          placeholder="Artist name"
+          required
+        />
+      </div>
+    </div>
+
+    <div className="space-y-2">
+      <Label htmlFor="description" className="font-body">Description</Label>
+      <Textarea
+        id="description"
+        name="description"
+        value={formData.description}
+        onChange={handleInputChange}
+        placeholder="Describe the painting..."
+        rows={3}
+      />
+    </div>
+
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="price" className="font-body">Price (₹) *</Label>
+        <Input
+          id="price"
+          name="price"
+          type="number"
+          value={formData.price}
+          onChange={handleInputChange}
+          placeholder="25000"
+          required
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="category" className="font-body">Category *</Label>
+        <Select
+          value={formData.category}
+          onValueChange={(value) => setFormData((prev) => ({ ...prev, category: value }))}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select category" />
+          </SelectTrigger>
+          <SelectContent>
+            {CATEGORIES.map((cat) => (
+              <SelectItem key={cat} value={cat}>
+                {cat}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+
+    <div className="space-y-2">
+      <Label htmlFor="imageUrl" className="font-body">Image URL</Label>
+      <Input
+        id="imageUrl"
+        name="imageUrl"
+        value={formData.imageUrl}
+        onChange={handleInputChange}
+        placeholder="https://..."
+      />
+    </div>
+
+    <div className="grid grid-cols-3 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="dimensions" className="font-body">Dimensions</Label>
+        <Input
+          id="dimensions"
+          name="dimensions"
+          value={formData.dimensions}
+          onChange={handleInputChange}
+          placeholder='24" x 36"'
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="medium" className="font-body">Medium</Label>
+        <Input
+          id="medium"
+          name="medium"
+          value={formData.medium}
+          onChange={handleInputChange}
+          placeholder="Oil on Canvas"
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="year" className="font-body">Year</Label>
+        <Input
+          id="year"
+          name="year"
+          type="number"
+          value={formData.year}
+          onChange={handleInputChange}
+          placeholder="2024"
+        />
+      </div>
+    </div>
+
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <Switch
+          id="available"
+          checked={formData.available}
+          onCheckedChange={(checked) =>
+            setFormData((prev) => ({ ...prev, available: checked }))
+          }
+        />
+        <Label htmlFor="available" className="font-body">Available for sale</Label>
+      </div>
+      <Button type="submit" variant="gallery" disabled={isSubmitting}>
+        {isSubmitting ? "Saving..." : submitLabel}
+      </Button>
+    </div>
+  </form>
+);
+
 const Admin = () => {
   const navigate = useNavigate();
   const { user, isAdmin, loading: authLoading } = useAuth();
@@ -81,7 +232,7 @@ const Admin = () => {
 
   const handleAddSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.title || !formData.artist || !formData.price || !formData.category) {
       toast.error("Please fill in all required fields");
       return;
@@ -131,7 +282,7 @@ const Admin = () => {
 
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!editingPainting) return;
 
     setIsSubmitting(true);
@@ -170,147 +321,12 @@ const Admin = () => {
     }
   };
 
-  const PaintingForm = ({ onSubmit, submitLabel }: { onSubmit: (e: React.FormEvent) => void; submitLabel: string }) => (
-    <form onSubmit={onSubmit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="title" className="font-body">Title *</Label>
-          <Input
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            placeholder="Painting title"
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="artist" className="font-body">Artist *</Label>
-          <Input
-            id="artist"
-            name="artist"
-            value={formData.artist}
-            onChange={handleInputChange}
-            placeholder="Artist name"
-            required
-          />
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="description" className="font-body">Description</Label>
-        <Textarea
-          id="description"
-          name="description"
-          value={formData.description}
-          onChange={handleInputChange}
-          placeholder="Describe the painting..."
-          rows={3}
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="price" className="font-body">Price (₹) *</Label>
-          <Input
-            id="price"
-            name="price"
-            type="number"
-            value={formData.price}
-            onChange={handleInputChange}
-            placeholder="25000"
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="category" className="font-body">Category *</Label>
-          <Select
-            value={formData.category}
-            onValueChange={(value) => setFormData((prev) => ({ ...prev, category: value }))}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select category" />
-            </SelectTrigger>
-            <SelectContent>
-              {CATEGORIES.map((cat) => (
-                <SelectItem key={cat} value={cat}>
-                  {cat}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="imageUrl" className="font-body">Image URL</Label>
-        <Input
-          id="imageUrl"
-          name="imageUrl"
-          value={formData.imageUrl}
-          onChange={handleInputChange}
-          placeholder="https://..."
-        />
-      </div>
-
-      <div className="grid grid-cols-3 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="dimensions" className="font-body">Dimensions</Label>
-          <Input
-            id="dimensions"
-            name="dimensions"
-            value={formData.dimensions}
-            onChange={handleInputChange}
-            placeholder='24" x 36"'
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="medium" className="font-body">Medium</Label>
-          <Input
-            id="medium"
-            name="medium"
-            value={formData.medium}
-            onChange={handleInputChange}
-            placeholder="Oil on Canvas"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="year" className="font-body">Year</Label>
-          <Input
-            id="year"
-            name="year"
-            type="number"
-            value={formData.year}
-            onChange={handleInputChange}
-            placeholder="2024"
-          />
-        </div>
-      </div>
-
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Switch
-            id="available"
-            checked={formData.available}
-            onCheckedChange={(checked) =>
-              setFormData((prev) => ({ ...prev, available: checked }))
-            }
-          />
-          <Label htmlFor="available" className="font-body">Available for sale</Label>
-        </div>
-        <Button type="submit" variant="gallery" disabled={isSubmitting}>
-          {isSubmitting ? "Saving..." : submitLabel}
-        </Button>
-      </div>
-    </form>
-  );
-
   // Show loading state
   if (authLoading) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <div className="flex items-center justify-center py-32">
+        <div className="flex items-center justify-center py-32 pt-24 md:pt-32">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       </div>
@@ -322,7 +338,7 @@ const Admin = () => {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <div className="container py-16">
+        <div className="container py-16 pt-24 md:pt-32">
           <div className="max-w-md mx-auto text-center">
             <div className="flex justify-center mb-6">
               <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center">
@@ -355,7 +371,7 @@ const Admin = () => {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <main className="container py-8 md:py-12">
+      <main className="container pt-24 pb-12 md:pt-32 md:pb-12">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground">
@@ -377,7 +393,14 @@ const Admin = () => {
               <DialogHeader>
                 <DialogTitle className="font-display text-2xl">Add New Painting</DialogTitle>
               </DialogHeader>
-              <PaintingForm onSubmit={handleAddSubmit} submitLabel="Add Painting" />
+              <PaintingForm
+                formData={formData}
+                handleInputChange={handleInputChange}
+                setFormData={setFormData}
+                onSubmit={handleAddSubmit}
+                submitLabel="Add Painting"
+                isSubmitting={isSubmitting}
+              />
             </DialogContent>
           </Dialog>
         </div>
@@ -495,11 +518,18 @@ const Admin = () => {
             <DialogHeader>
               <DialogTitle className="font-display text-2xl">Edit Painting</DialogTitle>
             </DialogHeader>
-            <PaintingForm onSubmit={handleEditSubmit} submitLabel="Save Changes" />
+            <PaintingForm
+              formData={formData}
+              handleInputChange={handleInputChange}
+              setFormData={setFormData}
+              onSubmit={handleEditSubmit}
+              submitLabel="Save Changes"
+              isSubmitting={isSubmitting}
+            />
           </DialogContent>
         </Dialog>
-      </main>
-    </div>
+      </main >
+    </div >
   );
 };
 

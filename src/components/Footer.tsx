@@ -13,12 +13,11 @@ const Footer = () => {
                 <Palette className="h-5 w-5 text-primary" />
               </div>
               <span className="font-display text-xl font-semibold text-foreground">
-                Artistry
+                The Rainbow Palette
               </span>
             </Link>
-            <p className="font-body text-sm text-muted-foreground max-w-xs">
-              Discover extraordinary original paintings from talented artists.
-              Each piece tells a unique story.
+            <p className="font-body text-sm text-muted-foreground max-w-xs leading-relaxed">
+              Curated with passion, crafted for the soul. Bringing timeless beauty into your everyday space.
             </p>
           </div>
 
@@ -57,7 +56,7 @@ const Footer = () => {
 
         <div className="mt-12 pt-8 border-t border-border">
           <p className="font-body text-sm text-muted-foreground text-center">
-            © {new Date().getFullYear()} Artistry. All rights reserved.
+            © {new Date().getFullYear()} The Rainbow Palette. All rights reserved.
           </p>
         </div>
       </div>

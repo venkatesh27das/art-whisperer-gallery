@@ -87,8 +87,8 @@ const Auth = () => {
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
               <Palette className="h-6 w-6 text-primary" />
             </div>
-            <span className="font-display text-2xl font-bold text-foreground">
-              Artistry
+            <span className="font-display text-xl font-bold text-foreground">
+              The Rainbow Palette
             </span>
           </div>
 
@@ -153,8 +153,8 @@ const Auth = () => {
               {isLoading
                 ? "Please wait..."
                 : isLogin
-                ? "Sign In"
-                : "Create Account"}
+                  ? "Sign In"
+                  : "Create Account"}
             </Button>
           </form>
 
