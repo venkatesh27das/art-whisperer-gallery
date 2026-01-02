@@ -46,7 +46,9 @@ export const GalleryProvider: React.FC<{ children: ReactNode }> = ({ children })
 
       setPaintings(formattedPaintings);
     } catch (error) {
-      console.error("Error fetching paintings:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error fetching paintings:", error);
+      }
       toast.error("Failed to load paintings");
     } finally {
       setLoading(false);
@@ -76,7 +78,9 @@ export const GalleryProvider: React.FC<{ children: ReactNode }> = ({ children })
 
       await fetchPaintings();
     } catch (error) {
-      console.error("Error adding painting:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error adding painting:", error);
+      }
       throw error;
     }
   };
@@ -105,7 +109,9 @@ export const GalleryProvider: React.FC<{ children: ReactNode }> = ({ children })
 
       await fetchPaintings();
     } catch (error) {
-      console.error("Error updating painting:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error updating painting:", error);
+      }
       throw error;
     }
   };
@@ -121,7 +127,9 @@ export const GalleryProvider: React.FC<{ children: ReactNode }> = ({ children })
 
       await fetchPaintings();
     } catch (error) {
-      console.error("Error deleting painting:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error deleting painting:", error);
+      }
       throw error;
     }
   };

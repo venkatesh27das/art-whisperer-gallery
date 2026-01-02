@@ -20,6 +20,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // Note: This client-side check is for UI/UX purposes only.
+  // Actual authorization is enforced by RLS policies using the is_admin() function.
   const checkAdminRole = async (userId: string) => {
     try {
       const { data, error } = await supabase
@@ -30,13 +32,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         .maybeSingle();
 
       if (error) {
-        console.error("Error checking admin role:", error);
+        if (import.meta.env.DEV) {
+          console.error("Error checking admin role:", error);
+        }
         return false;
       }
 
       return !!data;
     } catch (error) {
-      console.error("Error checking admin role:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error checking admin role:", error);
+      }
       return false;
     }
   };
